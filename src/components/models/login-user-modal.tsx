@@ -1,3 +1,11 @@
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useMutation } from "@tanstack/react-query"
+import type { AxiosError } from "axios"
+import { useForm } from "react-hook-form"
+import { toast } from "sonner"
+import { z } from "zod"
+
+import { API } from "~/lib/utils"
 import { useLoginUserModalContext } from "~/hooks/context/login-user-modal-context"
 import { useRegisterUserModalContext } from "~/hooks/context/register-user-modal-context"
 import { Button } from "~/components/ui/button"
@@ -5,9 +13,80 @@ import { Input } from "~/components/ui/input"
 import { Modal } from "~/components/ui/model"
 import { Icons } from "~/components/icons"
 
+const loginUserValidator = z.object({
+  email: z.string().email("Please enter a valid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters long"),
+})
+
+type LoginUserForm = z.infer<typeof loginUserValidator>
+
+type CustomErrorRegister = {
+  response: {
+    data: {
+      error: string
+    }
+  }
+} & AxiosError
+
 export function LoginUserModal() {
   const { isOpen, closeModal } = useLoginUserModalContext()
   const { openModal } = useRegisterUserModalContext()
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    setError,
+  } = useForm<LoginUserForm>({
+    resolver: zodResolver(loginUserValidator),
+  })
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: (data: Omit<LoginUserForm, "confirmPassword">) => API.post("/v1/auth/login", data),
+    onSuccess: () => {
+      reset()
+      closeModal()
+      toast.success("Welcome back!")
+    },
+    onError: (error: CustomErrorRegister) => {
+      console.log(error.response.data)
+      if (error.response.status === 404) {
+        setError("email", {
+          type: "manual",
+          message: "Some of your credentials are incorrect",
+        })
+        setError("password", {
+          type: "manual",
+          message: "Some of your credentials are incorrect",
+        })
+        return
+      }
+
+      if (error.response.status === 403) {
+        toast.error("You account is not verified. Please check your email for a verification code.")
+        closeModal()
+        return
+      }
+
+      if (error.response.status === 401) {
+        setError("password", {
+          type: "manual",
+          message: "Please provide valid password",
+        })
+        return
+      }
+
+      toast.error("Something went wrong, please try again later")
+    },
+  })
+
+  function onSubmit(data: LoginUserForm) {
+    mutate({
+      email: data.email,
+      password: data.password,
+    })
+  }
 
   return (
     <Modal
@@ -24,17 +103,23 @@ export function LoginUserModal() {
         </section>
         <div className="w-full border-b border-border">
           <section className="p-4">
-            <form className="space-y-2" aria-labelledby="signInFormHeading">
+            <form
+              onSubmit={(e) => void handleSubmit(onSubmit)(e)}
+              className="space-y-2"
+              aria-labelledby="signInFormHeading"
+            >
               <div className="grid gap-1.5">
                 <label htmlFor="email">Email</label>
-                <Input type="text" id="email" placeholder="malkovich@example.com" />
+                <Input {...register("email")} type="email" id="email" placeholder="malkovich@example.com" />
+                {errors?.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
               </div>
               <div className="grid gap-1.5">
                 <label htmlFor="password">Password</label>
-                <Input type="password" id="password" placeholder="*************" />
+                <Input {...register("password")} type="password" id="password" placeholder="*************" />
+                {errors?.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
               </div>
               <div className="pt-4">
-                <Button type="submit" className="w-full">
+                <Button disabled={isPending} isLoading={isPending} type="submit" className="w-full">
                   Sign In
                 </Button>
               </div>

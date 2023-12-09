@@ -68,6 +68,7 @@ export function RegisterUserModal() {
       setUserId(data.userId)
       setStep(Steps.VERIFY)
       reset()
+      toast.success("Please check your email to verify your account")
     },
     onError: (error: CustomErrorRegister) => {
       if (error.response.data.error.email) {
@@ -120,7 +121,7 @@ export function RegisterUserModal() {
                 </div>
                 <div className="grid gap-1.5">
                   <label htmlFor="email">Email</label>
-                  <Input {...register("email")} type="text" id="email" placeholder="malkovich@example.com" />
+                  <Input {...register("email")} type="email" id="email" placeholder="malkovich@example.com" />
                   {errors?.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
                 </div>
                 <div className="grid gap-1.5">
