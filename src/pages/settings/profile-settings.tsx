@@ -11,25 +11,13 @@ import { useSession } from "~/hooks/query/use-session"
 import { Button } from "~/components/ui/button"
 import { Input } from "~/components/ui/input"
 import { Icons } from "~/components/icons"
-import { Layout } from "~/components/layouts/layout"
-
-export default function SettingsPage() {
-  return (
-    <Layout title="Settings" className="max-w-lg">
-      <h2 className="text-2xl font-semibold">Settings</h2>
-      <p className="mt-2 text-muted-foreground">Here you can update your account settings.</p>
-      <Profile />
-    </Layout>
-  )
-}
 
 const updateProfileValidator = z.object({
   name: z.string().min(3, "Name must be at least 3 characters long"),
   image: z.string().optional(),
 })
 type UpdateProfileValidator = z.infer<typeof updateProfileValidator>
-
-export function Profile() {
+export function ProfileSettings() {
   const [image, setImage] = useState<string | null>(null)
   const queryClient = useQueryClient()
   const { session } = useSession()
