@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useRouter } from "next/router"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
 import type { AxiosError } from "axios"
@@ -36,6 +37,7 @@ enum Step {
 }
 
 export function LoginUserModal() {
+  const router = useRouter()
   const [step, setStep] = useState<Step>(Step.Login)
   const { isOpen, closeModal } = useLoginUserModalContext()
   const { openModal } = useRegisterUserModalContext()
@@ -54,6 +56,7 @@ export function LoginUserModal() {
     mutationFn: (data: Omit<LoginUserForm, "confirmPassword">) => API.post("/v1/auth/login", data),
     onSuccess: () => {
       reset()
+      void router.reload()
       closeModal()
       toast.success("Welcome back!")
     },
