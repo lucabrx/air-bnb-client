@@ -11,10 +11,11 @@ type ModalProps = {
   disabled?: boolean
   onClose: () => void
   isOpen: boolean
+  title: string
   styles?: string
 }
 
-export function Modal({ children, onClose, disabled, isOpen, styles }: ModalProps) {
+export function Modal({ children, onClose, disabled, isOpen, styles, title }: ModalProps) {
   const modalRef = useRef<HTMLDivElement>(null)
   useClickOutside(modalRef, onClose)
   useLockOverflow(isOpen)
@@ -50,28 +51,27 @@ export function Modal({ children, onClose, disabled, isOpen, styles }: ModalProp
         isOpen ? "bg-background/70 backdrop-blur-sm" : "bg-transparent"
       )}
     >
-      <div className="relative mx-auto h-full w-full md:h-auto md:w-4/6 lg:h-auto lg:w-auto">
+      <div className="relative mx-auto flex h-full w-full items-end md:h-auto md:w-4/6 lg:h-auto lg:w-auto">
         <div
-          className={`h-full duration-300 
-    ${isOpen ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"}`}
+          ref={modalRef}
+          className={cn(
+            "relative h-fit w-full flex-col items-end rounded-t-3xl border border-border bg-card shadow-lg md:h-auto md:rounded-md md:rounded-xl  lg:h-auto lg:w-auto",
+            styles
+          )}
         >
-          <div
-            ref={modalRef}
-            className={cn(
-              "relative flex h-full w-full flex-col border border-border  bg-card shadow-lg md:h-auto md:rounded-md  lg:h-auto lg:w-auto",
-              styles
-            )}
-          >
+          <div className="relative flex w-full items-center justify-center border-b border-border px-4 py-4">
             <Button
               size="icon"
               variant="ghost"
-              className="absolute right-3 top-3 h-6 w-6 cursor-pointer"
+              className="absolute left-4 top-4 h-8 w-8 cursor-pointer rounded-full"
               onClick={handleClose}
             >
-              <Icons.Close className="h-4 w-4" />
+              <Icons.Close className="h-5 w-5 text-foreground/80" />
             </Button>
-            {children}
+            <h2 className="w-full text-center font-semibold">{title}</h2>
           </div>
+
+          {children}
         </div>
       </div>
     </div>
