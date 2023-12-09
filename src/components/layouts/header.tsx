@@ -26,7 +26,7 @@ export function Header() {
   const { session } = useSession()
 
   return (
-    <div className="fixed top-0 w-full border-b border-border bg-background shadow-sm">
+    <div className="fixed top-0 z-20 w-full border-b border-border bg-background shadow-sm">
       <header className="container flex items-center justify-between gap-3 py-4 lg:gap-0" aria-label="Website Header">
         <button className="hidden text-primary sm:inline-block">
           <Icons.Logo />
