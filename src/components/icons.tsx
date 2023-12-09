@@ -1,5 +1,5 @@
 import { type HTMLAttributes } from "react"
-import { Loader2, Menu, Search } from "lucide-react"
+import { Loader2, Menu, Search, X } from "lucide-react"
 
 export const Icons = {
   Logo: ({ ...props }: HTMLAttributes<SVGElement>) => (
@@ -17,4 +17,5 @@ export const Icons = {
   Spinner: Loader2,
   Search,
   Menu,
+  Close: X,
 }
