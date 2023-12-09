@@ -17,7 +17,7 @@ export function Layout({ title, children, className }: LayoutProps) {
         <title>{title ? "Air BnB - " + title : "Air BnB"}</title>
       </Head>
       <Header />
-      <main className={cn("container flex-1", className)}>{children}</main>
+      <main className={cn("container mt-28 flex-1", className)}>{children}</main>
     </>
   )
 }

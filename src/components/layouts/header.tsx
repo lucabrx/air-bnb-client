@@ -1,19 +1,30 @@
 import { useRef, useState } from "react"
 import Image from "next/image"
+import Link from "next/link"
 
 import { useLoginUserModalContext } from "~/hooks/context/login-user-modal-context"
 import { useRegisterUserModalContext } from "~/hooks/context/register-user-modal-context"
+import { useSession } from "~/hooks/query/use-session"
 import { useClickOutside } from "~/hooks/use-click-outside"
 import { Button } from "~/components/ui/button"
 import { Icons } from "~/components/icons"
+
+const menuItems = [
+  {
+    name: "Settings",
+    href: "/settings",
+  },
+]
 
 export function Header() {
   const [showDropdown, setShowDropdown] = useState<boolean>(false)
   const showDropdownContentRef = useRef<HTMLDivElement>(null)
   const showDropdownTriggerRef = useRef<HTMLButtonElement>(null)
   useClickOutside(showDropdownContentRef, () => setShowDropdown(false), showDropdownTriggerRef)
-  const { openModal: openRegiserModal } = useRegisterUserModalContext()
+  const { openModal: openRegisterModal } = useRegisterUserModalContext()
   const { openModal: openLoginModal } = useLoginUserModalContext()
+  const { session } = useSession()
+
   return (
     <div className="fixed top-0 w-full border-b border-border bg-background shadow-sm">
       <header className="container flex items-center justify-between gap-3 py-4 lg:gap-0" aria-label="Website Header">
@@ -65,18 +76,32 @@ export function Header() {
                 className="absolute right-0 top-16 w-[12rem] overflow-hidden rounded-xl bg-card text-sm shadow-md md:top-12 lg:min-w-[10rem]"
               >
                 <div className="flex  w-full cursor-pointer flex-col">
-                  <button
-                    onClick={openLoginModal}
-                    className="w-full px-4 py-3 text-left font-semibold transition hover:bg-muted"
-                  >
-                    Sign In
-                  </button>
-                  <button
-                    onClick={openRegiserModal}
-                    className="w-full px-4 py-3 text-left font-semibold transition hover:bg-muted"
-                  >
-                    Sign Up
-                  </button>
+                  {session ? (
+                    menuItems.map((item) => (
+                      <Link
+                        href={item.href}
+                        key={item.name}
+                        className="w-full px-4 py-3 text-left font-semibold transition hover:bg-muted"
+                      >
+                        {item.name}
+                      </Link>
+                    ))
+                  ) : (
+                    <>
+                      <button
+                        onClick={openLoginModal}
+                        className="w-full px-4 py-3 text-left font-semibold transition hover:bg-muted"
+                      >
+                        Sign In
+                      </button>
+                      <button
+                        onClick={openRegisterModal}
+                        className="w-full px-4 py-3 text-left font-semibold transition hover:bg-muted"
+                      >
+                        Sign Up
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
             )}
