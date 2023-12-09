@@ -1,6 +1,8 @@
 import { useRef, useState } from "react"
 import Image from "next/image"
 
+import { useLoginUserModalContext } from "~/hooks/context/login-user-modal-context"
+import { useRegisterUserModalContext } from "~/hooks/context/register-user-modal-context"
 import { useClickOutside } from "~/hooks/use-click-outside"
 import { Button } from "~/components/ui/button"
 import { Icons } from "~/components/icons"
@@ -10,18 +12,30 @@ export function Header() {
   const showDropdownContentRef = useRef<HTMLDivElement>(null)
   const showDropdownTriggerRef = useRef<HTMLButtonElement>(null)
   useClickOutside(showDropdownContentRef, () => setShowDropdown(false), showDropdownTriggerRef)
+  const { openModal: openRegiserModal } = useRegisterUserModalContext()
+  const { openModal: openLoginModal } = useLoginUserModalContext()
   return (
     <div className="fixed top-0 w-full border-b border-border bg-background shadow-sm">
-      <header className="container flex items-center justify-between gap-3 py-4 lg:gap-0">
-        <Icons.Logo className="hidden text-primary sm:inline-block" />
+      <header className="container flex items-center justify-between gap-3 py-4 lg:gap-0" aria-label="Website Header">
+        <button className="hidden text-primary sm:inline-block">
+          <Icons.Logo />
+        </button>
 
-        <article className="w-full cursor-pointer rounded-full border border-border py-2 shadow-sm transition hover:shadow-md sm:w-fit md:w-auto">
+        <article
+          className="w-full cursor-pointer rounded-full border border-border py-2 shadow-sm transition hover:shadow-md sm:w-fit md:w-auto"
+          aria-label="Search and Navigation"
+        >
           <div className="flex flex-row items-center justify-between">
             <h2 className="px-6 text-sm font-semibold">Anywhere</h2>
             <h2 className="hidden flex-1 border-x px-6 text-center text-sm font-semibold sm:block">Any Week</h2>
             <div className="flex flex-row items-center gap-3 pl-6 pr-2 text-sm text-gray-600">
               <h2 className="hidden sm:block">Add Guests</h2>
-              <div className="rounded-full bg-rose-500 p-2 text-white">
+              <div
+                className="rounded-full bg-rose-500 p-2 text-white"
+                aria-label="Search Button"
+                role="button"
+                tabIndex={0}
+              >
                 <Icons.Search className="h-4 w-4" />
               </div>
             </div>
@@ -37,6 +51,9 @@ export function Header() {
             ref={showDropdownTriggerRef}
             onClick={() => setShowDropdown(!showDropdown)}
             className="relative flex cursor-pointer flex-row items-center gap-3 rounded-full border border-border p-4 transition hover:shadow-md md:px-2 md:py-1"
+            aria-label="User Menu"
+            role="button"
+            tabIndex={0}
           >
             <Icons.Menu className="h-5 w-5 text-muted-foreground" />
             <div className="hidden md:block">
@@ -45,13 +62,19 @@ export function Header() {
             {showDropdown && (
               <div
                 ref={showDropdownContentRef}
-                className="absolute right-0 top-12 w-[40vw] overflow-hidden rounded-xl bg-card text-sm shadow-md md:w-3/4 lg:min-w-[10rem]"
+                className="absolute right-0 top-16 w-[12rem] overflow-hidden rounded-xl bg-card text-sm shadow-md md:top-12 lg:min-w-[10rem]"
               >
                 <div className="flex  w-full cursor-pointer flex-col">
-                  <button className="w-full px-4 py-3 font-semibold transition hover:bg-muted md:text-left">
+                  <button
+                    onClick={openLoginModal}
+                    className="w-full px-4 py-3 text-left font-semibold transition hover:bg-muted"
+                  >
                     Sign In
                   </button>
-                  <button className="w-full px-4 py-3 font-semibold transition hover:bg-muted md:text-left">
+                  <button
+                    onClick={openRegiserModal}
+                    className="w-full px-4 py-3 text-left font-semibold transition hover:bg-muted"
+                  >
                     Sign Up
                   </button>
                 </div>

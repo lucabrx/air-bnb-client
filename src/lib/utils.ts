@@ -12,3 +12,7 @@ export const API = axios.create({
   baseURL: BASE_URL,
   withCredentials: true,
 })
+
+export function capitalize(str: string): string {
+  return str.charAt(0).toUpperCase() + str.slice(1)
+}
