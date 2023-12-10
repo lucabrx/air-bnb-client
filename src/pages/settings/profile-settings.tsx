@@ -135,7 +135,7 @@ export function ProfileSettings() {
         />
         {errors.name && <p className="mt-0.5 text-sm text-destructive">{errors.name.message}</p>}
         <div className="mt-4 flex justify-end">
-          <Button disabled={isPending} isLoading={isPending} type="submit">
+          <Button size="sm" disabled={isPending} isLoading={isPending} type="submit">
             Save
           </Button>
         </div>

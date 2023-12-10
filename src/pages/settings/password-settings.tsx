@@ -54,7 +54,7 @@ export function PasswordSettings() {
           {errors.newPassword && <p className="text-error">{errors.newPassword.message}</p>}
         </div>
         <div className="flex justify-end pt-3">
-          <Button disabled={isPending} isLoading={isPending} type="submit">
+          <Button size="sm" disabled={isPending} isLoading={isPending} type="submit">
             Save
           </Button>
         </div>

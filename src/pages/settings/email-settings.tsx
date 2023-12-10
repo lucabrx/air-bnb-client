@@ -99,7 +99,7 @@ export function EmailSettings() {
             {errorsChangeEmail.verifyCode && <p className="text-error">{errorsChangeEmail.verifyCode.message}</p>}
           </div>
           <div className="flex justify-end pt-3">
-            <Button disabled={isPendingChangeEmail} isLoading={isPendingChangeEmail} type="submit">
+            <Button size="sm" disabled={isPendingChangeEmail} isLoading={isPendingChangeEmail} type="submit">
               Change Email
             </Button>
           </div>
@@ -117,7 +117,12 @@ export function EmailSettings() {
             )}
           </div>
           <div className="flex justify-end pt-3">
-            <Button disabled={isPendingRequestChangeEmail} isLoading={isPendingRequestChangeEmail} type="submit">
+            <Button
+              size="sm"
+              disabled={isPendingRequestChangeEmail}
+              isLoading={isPendingRequestChangeEmail}
+              type="submit"
+            >
               Change Email
             </Button>
           </div>
