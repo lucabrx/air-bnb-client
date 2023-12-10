@@ -1,3 +1,4 @@
+import { EmailSettings } from "~/pages/settings/email-settings"
 import { PasswordSettings } from "~/pages/settings/password-settings"
 import { ProfileSettings } from "~/pages/settings/profile-settings"
 
@@ -10,6 +11,7 @@ export default function IndexPage() {
       <p className="mt-2 text-muted-foreground">Here you can update your account settings.</p>
       <ProfileSettings />
       <PasswordSettings />
+      <EmailSettings />
     </Layout>
   )
 }
