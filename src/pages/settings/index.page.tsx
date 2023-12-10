@@ -1,3 +1,4 @@
+import { DeleteProfileModal } from "~/pages/settings/delete-profile-modal"
 import { EmailSettings } from "~/pages/settings/email-settings"
 import { PasswordSettings } from "~/pages/settings/password-settings"
 import { ProfileSettings } from "~/pages/settings/profile-settings"
@@ -12,6 +13,7 @@ export default function IndexPage() {
       <ProfileSettings />
       <PasswordSettings />
       <EmailSettings />
+      <DeleteProfileModal />
     </Layout>
   )
 }
