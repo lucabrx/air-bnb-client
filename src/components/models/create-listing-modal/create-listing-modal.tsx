@@ -1,12 +1,13 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState, type ChangeEvent } from "react"
 import dynamic from "next/dynamic"
+import Image from "next/image"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
 import { categories } from "~/config/categories"
-import { cn } from "~/lib/utils"
+import { API, cn } from "~/lib/utils"
 import { useCreateListingModalContext } from "~/hooks/context/create-listing-modal-context"
 import { Button } from "~/components/ui/button"
 import { Input, inputVariants } from "~/components/ui/input"
@@ -22,6 +23,7 @@ enum Steps {
   Category,
   Location,
   Info,
+  Images,
   Price,
 }
 
@@ -48,6 +50,22 @@ export function CreateListingModal() {
   const [bedroomCount, setBedroomCount] = useState<number>(1)
   const [bathroomCount, setBathroomCount] = useState<number>(1)
 
+  const [images, setImages] = useState<File[]>([])
+  const inputFileRef = useRef<HTMLInputElement>(null)
+  const [imagesURL, setImagesURL] = useState<string[]>([])
+
+  async function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
+    const selectedFile = event.target.files?.[0]
+    if (selectedFile) {
+      setImages((prev) => [...prev, selectedFile])
+      const formData = new FormData()
+      formData.append("file", selectedFile)
+      const res = await API.post("/v1/upload/image", formData)
+      const data = res.data as { url: string }
+      setImagesURL((prev) => [...prev, data.url])
+    }
+  }
+
   const {
     register,
     setValue,
@@ -64,7 +82,7 @@ export function CreateListingModal() {
     setStep((prev) => prev + 1)
   }
   function onBack() {
-    if (step !== Steps.Category) {
+    if (step !== Steps.Description) {
       setStep((prev) => prev - 1)
       return
     }
@@ -92,6 +110,7 @@ export function CreateListingModal() {
     reset()
   }
 
+  console.log(imagesURL)
   return (
     <Modal
       disabled={isPending}
@@ -191,6 +210,48 @@ export function CreateListingModal() {
             </section>
           </>
         )}
+        {step === Steps.Images && (
+          <>
+            <section className="px-4 pt-4">
+              <h2 className="text-2xl font-bold">Upload Images</h2>
+              <h3 className="mt-2 font-light text-muted-foreground">Upload images to attract guests</h3>
+            </section>
+
+            <section className="flex flex-col items-center justify-center p-4">
+              <div
+                onClick={() => inputFileRef.current?.click()}
+                className="relative aspect-square h-1/2 w-1/2 rounded-md bg-muted hover:cursor-pointer"
+              >
+                <Icons.Plus className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform cursor-pointer rounded-full bg-white p-1" />
+                <input
+                  ref={inputFileRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => void handleFileChange(e)}
+                />
+              </div>
+            </section>
+            <section className="flex max-w-[40rem] gap-2 overflow-x-scroll p-4">
+              {images.map((image, i) => (
+                <div key={i} className="relative aspect-square h-24 w-24 rounded-md bg-muted">
+                  <Image
+                    src={URL.createObjectURL(image)}
+                    alt="image"
+                    className="aspect-square rounded-md object-cover "
+                    width={100}
+                    height={100}
+                  />
+                  <Icons.Close
+                    onClick={() => setImages((prev) => prev.filter((_, index) => index !== i))}
+                    className="absolute right-1 top-1 h-5 w-5 cursor-pointer rounded-full bg-black/50 text-white"
+                  />
+                </div>
+              ))}
+            </section>
+          </>
+        )}
+
         {step === Steps.Price && (
           <>
             <section className="px-4 pt-4">
@@ -209,7 +270,7 @@ export function CreateListingModal() {
       </form>
       <div className="flex items-center justify-center gap-4 p-4">
         <Button isLoading={isPending} className="w-full" size="sm" variant="outline" onClick={onBack}>
-          {step === Steps.Category ? "Cancel" : "Back"}
+          {step === Steps.Description ? "Cancel" : "Back"}
         </Button>
         <Button
           isLoading={isPending}
