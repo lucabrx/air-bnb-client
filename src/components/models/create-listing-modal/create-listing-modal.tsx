@@ -36,6 +36,7 @@ const createListingValidator = z.object({
   title: z.string().min(5, "Please enter a title, at least 5 characters long").optional(),
   description: z.string().min(10, "Please enter a description, at least 10 characters long").optional(),
   price: z.string().min(1, "Please enter a price, at least 1").optional(),
+  images: z.array(z.string()).optional(),
 })
 
 type CreateListingValidator = z.infer<typeof createListingValidator>
@@ -50,19 +51,21 @@ export function CreateListingModal() {
   const [bedroomCount, setBedroomCount] = useState<number>(1)
   const [bathroomCount, setBathroomCount] = useState<number>(1)
 
-  const [images, setImages] = useState<File[]>([])
   const inputFileRef = useRef<HTMLInputElement>(null)
-  const [imagesURL, setImagesURL] = useState<string[]>([])
+  const [images, setImages] = useState<string[]>([])
 
   async function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
-    const selectedFile = event.target.files?.[0]
-    if (selectedFile) {
-      setImages((prev) => [...prev, selectedFile])
-      const formData = new FormData()
-      formData.append("file", selectedFile)
-      const res = await API.post("/v1/upload/image", formData)
-      const data = res.data as { url: string }
-      setImagesURL((prev) => [...prev, data.url])
+    const selectedFiles = event.target.files
+    if (selectedFiles) {
+      const files = Array.from(selectedFiles)
+
+      for (const file of files) {
+        const formData = new FormData()
+        formData.append("file", file)
+        const res = await API.post("/v1/upload/image", formData)
+        const data = res.data as { url: string }
+        setImages((prev) => [...prev, data.url])
+      }
     }
   }
 
@@ -95,11 +98,11 @@ export function CreateListingModal() {
     setValue("guests", guestCount)
     setValue("bedrooms", bedroomCount)
     setValue("bathrooms", bathroomCount)
-
+    setValue("images", images)
     if (selectedLocation) {
       setValue("location", selectedLocation)
     }
-  }, [selectedCategory, setValue, selectedLocation, guestCount, bedroomCount, bathroomCount])
+  }, [selectedCategory, setValue, selectedLocation, guestCount, bedroomCount, bathroomCount, images])
 
   function onSubmit(data: CreateListingValidator) {
     if (step !== Steps.Price) {
@@ -110,7 +113,6 @@ export function CreateListingModal() {
     reset()
   }
 
-  console.log(imagesURL)
   return (
     <Modal
       disabled={isPending}
@@ -228,6 +230,7 @@ export function CreateListingModal() {
                   type="file"
                   accept="image/*"
                   className="hidden"
+                  multiple
                   onChange={(e) => void handleFileChange(e)}
                 />
               </div>
@@ -236,14 +239,16 @@ export function CreateListingModal() {
               {images.map((image, i) => (
                 <div key={i} className="relative aspect-square h-24 w-24 rounded-md bg-muted">
                   <Image
-                    src={URL.createObjectURL(image)}
+                    src={image}
                     alt="image"
                     className="aspect-square rounded-md object-cover "
                     width={100}
                     height={100}
                   />
                   <Icons.Close
-                    onClick={() => setImages((prev) => prev.filter((_, index) => index !== i))}
+                    onClick={() => {
+                      setImages((prev) => prev.filter((_, index) => index !== i))
+                    }}
                     className="absolute right-1 top-1 h-5 w-5 cursor-pointer rounded-full bg-black/50 text-white"
                   />
                 </div>
