@@ -3,10 +3,12 @@ import {
   Building,
   Castle,
   Coffee,
+  DollarSign,
   Factory,
   Gem,
   Loader2,
   Menu,
+  Minus,
   Palmtree,
   Plus,
   Pyramid,
@@ -37,6 +39,8 @@ export const Icons = {
   Search,
   Menu,
   Plus,
+  Minus,
+  Dollar: DollarSign,
   Close: X,
   GitHub: ({ ...props }: HTMLAttributes<SVGElement>) => (
     <svg viewBox="0 0 438.549 438.549" {...props}>

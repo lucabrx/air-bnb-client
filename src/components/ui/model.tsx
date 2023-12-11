@@ -63,7 +63,7 @@ export function Modal({ children, onClose, disabled, isOpen, styles, title }: Mo
             <Button
               size="icon"
               variant="ghost"
-              className="absolute left-4 top-4 h-8 w-8 cursor-pointer rounded-full"
+              className="absolute left-3.5 top-3.5 h-8 w-8 cursor-pointer rounded-full"
               onClick={handleClose}
             >
               <Icons.Close className="h-5 w-5 text-foreground/80" />
