@@ -7,7 +7,7 @@ type Props = {
 }
 
 export const useCreateListingModalContext = create<Props>((set) => ({
-  isOpen: true,
+  isOpen: false,
   openModal: () => set({ isOpen: true }),
   closeModal: () => set({ isOpen: false }),
 }))
