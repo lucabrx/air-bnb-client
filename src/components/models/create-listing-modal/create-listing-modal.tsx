@@ -1,14 +1,17 @@
 import { useEffect, useRef, useState, type ChangeEvent } from "react"
 import dynamic from "next/dynamic"
 import Image from "next/image"
+import { useRouter } from "next/router"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
 import { useForm } from "react-hook-form"
+import { toast } from "sonner"
 import { z } from "zod"
 
 import { categories } from "~/config/categories"
 import { API, cn } from "~/lib/utils"
 import { useCreateListingModalContext } from "~/hooks/context/create-listing-modal-context"
+import useCountries from "~/hooks/use-countries"
 import { Button } from "~/components/ui/button"
 import { Input, inputVariants } from "~/components/ui/input"
 import { Modal } from "~/components/ui/model"
@@ -42,11 +45,13 @@ const createListingValidator = z.object({
 type CreateListingValidator = z.infer<typeof createListingValidator>
 
 export function CreateListingModal() {
+  const router = useRouter()
+  const { getAll } = useCountries()
   const { isOpen: isOpenListingModal, closeModal: closeListingModal } = useCreateListingModalContext()
   const [step, setStep] = useState<Steps>(Steps.Description)
 
   const [selectedCategory, setSelectedCategory] = useState<string>("Beachfront")
-  const [selectedLocation, setSelectedLocation] = useState<CountrySelectValue>()
+  const [selectedLocation, setSelectedLocation] = useState<CountrySelectValue>(getAll()[0])
   const [guestCount, setGuestCount] = useState<number>(1)
   const [bedroomCount, setBedroomCount] = useState<number>(1)
   const [bathroomCount, setBathroomCount] = useState<number>(1)
@@ -79,7 +84,17 @@ export function CreateListingModal() {
     resolver: zodResolver(createListingValidator),
   })
 
-  const { isPending } = useMutation({})
+  const { isPending, mutate } = useMutation({
+    mutationFn: (data: CreateListingValidator) => API.post("/v1/listings", data),
+    onSuccess: ({ data }: { data: { id: number } }) => {
+      void router.push(`/listings/${data.id}`)
+      reset()
+      toast.success("Listing created successfully.")
+    },
+    onError: () => {
+      toast.error("Something went wrong, please try again.")
+    },
+  })
 
   function onNext() {
     setStep((prev) => prev + 1)
@@ -109,7 +124,7 @@ export function CreateListingModal() {
       onNext()
       return
     }
-    console.log(data)
+    mutate(data)
     reset()
   }
 

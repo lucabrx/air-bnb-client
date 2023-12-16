@@ -26,6 +26,7 @@ function CountrySelect({ value, onChange }: CountrySelectProps) {
         placeholder="Anywhere"
         isClearable
         options={getAll()}
+        defaultValue={getAll()[0]}
         value={value}
         onChange={(value) => onChange(value!)}
         formatOptionLabel={(option: CountrySelectValue) => (

@@ -1,8 +1,8 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/router"
 
 import { categories } from "~/config/categories"
-import { cn } from "~/lib/utils"
+import { API, cn } from "~/lib/utils"
 import { Button } from "~/components/ui/button"
 import { Layout } from "~/components/layouts/layout"
 
@@ -23,6 +23,14 @@ type CategoriesProps = {
   setSelected: (selected: string) => void
 }
 export function Categories({ selected, setSelected }: CategoriesProps) {
+  useEffect(() => {
+    API.get("/v1/listings/1")
+      .then((res) => {
+        console.log(res.data)
+      })
+      .catch(console.error)
+  }, [])
+
   return (
     <div className=" mt-16 flex w-full items-center justify-center py-3 ">
       <div className="flex w-full items-center justify-between overflow-x-auto">
