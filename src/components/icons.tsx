@@ -2,6 +2,8 @@ import { type HTMLAttributes } from "react"
 import {
   Building,
   Castle,
+  ChevronLeft,
+  ChevronRight,
   Coffee,
   DollarSign,
   Factory,
@@ -40,6 +42,8 @@ export const Icons = {
   Menu,
   Plus,
   Minus,
+  ChevronLeft,
+  ChevronRight,
   Dollar: DollarSign,
   Close: X,
   GitHub: ({ ...props }: HTMLAttributes<SVGElement>) => (
