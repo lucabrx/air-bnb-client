@@ -1,7 +1,12 @@
 import { useRef, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { useRouter } from "next/router"
+import { useMutation } from "@tanstack/react-query"
+import { toast } from "sonner"
 
+import { API } from "~/lib/utils"
+import { useCreateListingModalContext } from "~/hooks/context/create-listing-modal-context"
 import { useLoginUserModalContext } from "~/hooks/context/login-user-modal-context"
 import { useRegisterUserModalContext } from "~/hooks/context/register-user-modal-context"
 import { useSession } from "~/hooks/query/use-session"
@@ -14,16 +19,33 @@ const menuItems = [
     name: "Settings",
     href: "/settings",
   },
+  {
+    name: "My Properties",
+    href: "/properties",
+  },
 ]
 
 export function Header() {
+  const router = useRouter()
   const [showDropdown, setShowDropdown] = useState<boolean>(false)
   const showDropdownContentRef = useRef<HTMLDivElement>(null)
   const showDropdownTriggerRef = useRef<HTMLButtonElement>(null)
   useClickOutside(showDropdownContentRef, () => setShowDropdown(false), showDropdownTriggerRef)
   const { openModal: openRegisterModal } = useRegisterUserModalContext()
   const { openModal: openLoginModal } = useLoginUserModalContext()
+  const { openModal: openCreateListing } = useCreateListingModalContext()
   const { session } = useSession()
+
+  const { mutate: logout, isPending: isLoadingLogout } = useMutation({
+    mutationFn: () => API.delete("/v1/auth/logout"),
+    onSuccess: () => {
+      void router.reload()
+      toast.info("You have been logged out.")
+    },
+    onError: () => {
+      toast.error("Something went wrong, please try again later.")
+    },
+  })
 
   return (
     <div className="fixed top-0 z-20 w-full bg-background  ">
@@ -55,7 +77,7 @@ export function Header() {
           </article>
 
           <section className="flex flex-row items-center gap-3">
-            <Button className="hidden rounded-full md:flex" variant="ghost" size="sm">
+            <Button onClick={openCreateListing} className="hidden rounded-full md:flex" variant="ghost" size="sm">
               Airbnb your home
             </Button>
 
@@ -78,15 +100,27 @@ export function Header() {
                 >
                   <div className="flex  w-full cursor-pointer flex-col">
                     {session ? (
-                      menuItems.map((item) => (
-                        <Link
-                          href={item.href}
-                          key={item.name}
+                      <>
+                        {menuItems.map((item) => (
+                          <Link
+                            href={item.href}
+                            key={item.name}
+                            className="w-full px-4 py-3 text-left font-semibold transition hover:bg-muted"
+                          >
+                            {item.name}
+                          </Link>
+                        ))}
+                        <button
+                          disabled={isLoadingLogout}
+                          onClick={() => {
+                            setShowDropdown(false)
+                            void logout()
+                          }}
                           className="w-full px-4 py-3 text-left font-semibold transition hover:bg-muted"
                         >
-                          {item.name}
-                        </Link>
-                      ))
+                          Sign Out
+                        </button>
+                      </>
                     ) : (
                       <>
                         <button

@@ -12,6 +12,7 @@ export default function Home() {
       <Categories selected={selectedCategory} setSelected={setSelectedCategory} />
       <Layout className="mt-0">
         <Button>Hello World</Button>
+        <a href={"http://localhost:8080/v1/auth/github/login"}>Login with Github</a>
       </Layout>
     </>
   )

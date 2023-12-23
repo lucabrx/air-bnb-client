@@ -1,4 +1,5 @@
 import { useState } from "react"
+import Link from "next/link"
 import { useRouter } from "next/router"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
@@ -7,10 +8,10 @@ import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
 
-import { API } from "~/lib/utils"
+import { API, BASE_URL, cn } from "~/lib/utils"
 import { useLoginUserModalContext } from "~/hooks/context/login-user-modal-context"
 import { useRegisterUserModalContext } from "~/hooks/context/register-user-modal-context"
-import { Button } from "~/components/ui/button"
+import { Button, buttonVariants } from "~/components/ui/button"
 import { Input } from "~/components/ui/input"
 import { Modal } from "~/components/ui/model"
 import { Icons } from "~/components/icons"
@@ -150,9 +151,21 @@ export function LoginUserModal() {
             <Button variant="outline" className="w-full">
               <Icons.Google className="mr-2 h-5 w-5" /> Sign in with Google
             </Button>
-            <Button variant="outline" className="w-full">
+            <a
+              onClick={() => {
+                toast.info("Welcome user!")
+                closeModal()
+              }}
+              href={`${BASE_URL}/v1/auth/github/login`}
+              className={cn(
+                buttonVariants({
+                  variant: "outline",
+                }),
+                "w-full"
+              )}
+            >
               <Icons.GitHub className="mr-2 h-5 w-5" /> Sign in with Github
-            </Button>
+            </a>
           </section>
           <section className="p-4">
             <div className="flex flex-row items-center justify-center gap-2">

@@ -1,5 +1,3 @@
-import { useEffect } from "react"
-import { useRouter } from "next/router"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { type AxiosError } from "axios"
 
@@ -30,7 +28,6 @@ async function fetchSessionUser() {
 }
 
 export function useSession() {
-  const router = useRouter()
   const queryClient = useQueryClient()
 
   const { data, isLoading, error, isError } = useQuery<UserType, CustomErrorType>({
@@ -39,12 +36,6 @@ export function useSession() {
     initialData: queryClient.getQueryData(["session"]),
     retry: false,
   })
-
-  useEffect(() => {
-    if (isError && error?.response?.status === 401) {
-      void router.push("/")
-    }
-  }, [isError, error, router])
 
   return {
     session: data?.user,

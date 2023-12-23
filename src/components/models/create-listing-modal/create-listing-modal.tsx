@@ -90,6 +90,7 @@ export function CreateListingModal() {
       void router.push(`/listings/${data.id}`)
       reset()
       toast.success("Listing created successfully.")
+      closeListingModal()
     },
     onError: () => {
       toast.error("Something went wrong, please try again.")
@@ -281,7 +282,7 @@ export function CreateListingModal() {
             <section className="flex w-full flex-col items-start gap-2 p-4 ">
               <label>Price</label>
               <div className="relative w-full">
-                <Icons.Dollar className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
+                <Icons.Dollar className="absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input className="pl-8" disabled={isPending} type="number" {...register("price")} defaultValue={1} />
               </div>
             </section>

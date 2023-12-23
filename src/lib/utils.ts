@@ -2,7 +2,7 @@ import axios from "axios"
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
-const BASE_URL = "http://localhost:8080"
+export const BASE_URL = "http://localhost:8080"
 
 export function cn(...inputs: ClassValue[]): string {
   return twMerge(clsx(inputs))
