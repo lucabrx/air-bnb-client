@@ -26,6 +26,7 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
   }, [router, search, onClose])
 
   useEffect(() => {
+    if (!open) return
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === "Enter") {
         handleSearch()
@@ -36,7 +37,7 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
     return () => {
       window.removeEventListener("keydown", handleKeyDown)
     }
-  }, [search, handleSearch])
+  }, [search, handleSearch, open])
 
   if (!open) return null
   return (
