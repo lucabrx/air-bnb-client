@@ -91,7 +91,13 @@ export function Header() {
             >
               <Icons.Menu className="h-5 w-5 text-muted-foreground" />
               <div className="hidden md:block">
-                <Image src="/default-user.png" alt="user avatar" width={32} height={32} className="rounded-full" />
+                <Image
+                  src={session?.image ?? "/default-user.png"}
+                  alt="user avatar"
+                  width={32}
+                  height={32}
+                  className="rounded-full"
+                />
               </div>
               {showDropdown && (
                 <div
@@ -116,7 +122,7 @@ export function Header() {
                             setShowDropdown(false)
                             void logout()
                           }}
-                          className="w-full px-4 py-3 text-left font-semibold transition hover:bg-muted"
+                          className="w-full border-t border-border px-4 py-3 text-left font-semibold transition hover:bg-muted"
                         >
                           Sign Out
                         </button>
