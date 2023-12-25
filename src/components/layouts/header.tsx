@@ -51,9 +51,9 @@ export function Header() {
     <div className="fixed top-0 z-20 w-full bg-background  ">
       <div className="w-full border-b border-border py-3">
         <header className="container flex items-center justify-between gap-3  lg:gap-0" aria-label="Website Header">
-          <button className="hidden text-primary sm:inline-block">
+          <Link href="/" className="hidden text-primary sm:inline-block">
             <Icons.Logo />
-          </button>
+          </Link>
 
           <article
             className="w-full cursor-pointer rounded-full border border-border py-2 shadow-sm transition hover:shadow-md sm:w-fit md:w-auto"
