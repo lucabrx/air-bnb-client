@@ -16,10 +16,10 @@ import { Button } from "~/components/ui/button"
 import { Input, inputVariants } from "~/components/ui/input"
 import { Modal } from "~/components/ui/model"
 import { Icons } from "~/components/icons"
-import { Counter } from "~/components/models/create-listing-modal/counter"
-import CountrySelect, { type CountrySelectValue } from "~/components/models/create-listing-modal/country-select"
+import { Counter } from "~/components/modals/create-listing-modal/counter"
+import CountrySelect, { type CountrySelectValue } from "~/components/modals/create-listing-modal/country-select"
 
-const Map = dynamic(() => import("~/components/models/create-listing-modal/custom-map"), { ssr: false })
+const Map = dynamic(() => import("~/components/modals/create-listing-modal/custom-map"), { ssr: false })
 
 enum Steps {
   Description,

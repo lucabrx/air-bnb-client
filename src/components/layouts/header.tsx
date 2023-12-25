@@ -13,7 +13,7 @@ import { useSession } from "~/hooks/query/use-session"
 import { useClickOutside } from "~/hooks/use-click-outside"
 import { Button } from "~/components/ui/button"
 import { Icons } from "~/components/icons"
-import { SearchModal } from "~/components/models/search-modal"
+import { SearchModal } from "~/components/modals/search-modal"
 
 const menuItems = [
   {
