@@ -1,6 +1,5 @@
 import { useRouter } from "next/router"
-import { useQuery } from "@tanstack/react-query"
-import type { AxiosError } from "axios"
+import { useInfiniteQuery } from "@tanstack/react-query"
 
 import { API } from "~/lib/utils"
 import { type Listing } from "~/hooks/query/use-user-listings"
@@ -18,36 +17,31 @@ type ListingType = {
   metadata: Metadata
 }
 
-type CustomErrorType = {
-  response: {
-    data: {
-      error: string
-    }
-  }
-} & AxiosError
-
-async function fetchListings(search: string) {
-  const res = await API.get<ListingType>(`/v1/listings?search=${search}`)
+async function fetchListings({ search, pageParam = 0 }: { search: string; pageParam: number }) {
+  const res = await API.get<ListingType>(`/v1/listings?search=${search}&page=${pageParam}`)
+  console.log(res.data.metadata)
   return res.data
 }
 
 export function useListings() {
   const router = useRouter()
   const search = router.query.search || ""
-  const { data, isLoading, error, isError } = useQuery<ListingType, CustomErrorType>({
+
+  const { fetchNextPage, data, isLoading, hasNextPage } = useInfiniteQuery({
     queryKey: ["listings", search],
-    queryFn: () => fetchListings(String(search)),
+    queryFn: ({ pageParam = 0 }) => fetchListings({ pageParam, search: search as string }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      if (lastPage.metadata?.currentPage === lastPage.metadata?.lastPage) return undefined
+
+      return Number(lastPage.metadata?.currentPage) + 1
+    },
   })
 
-  if (isError && error?.response?.status === 404) {
-    void router.push("/404")
-  }
-
   return {
-    listings: data?.listings,
-    metadata: data?.metadata,
+    fetchNextPage,
+    listings: data?.pages.flatMap((page) => page.listings) ?? [],
     isLoading,
-    error,
-    isError,
+    hasNextPage,
   }
 }

@@ -1,21 +1,23 @@
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import dynamic from "next/dynamic"
 import Image from "next/image"
+import { useMutation } from "@tanstack/react-query"
 
 import { DeleteListingModal } from "~/pages/listings/delete-listing-modal"
 import { GalleryModal } from "~/pages/listings/gallery-modal"
 
 import { categories } from "~/config/categories"
-import { cn } from "~/lib/utils"
+import { API, cn } from "~/lib/utils"
 import { useListing } from "~/hooks/query/use-listing"
 import { useSession } from "~/hooks/query/use-session"
 import { Button } from "~/components/ui/button"
+import { Input, inputVariants } from "~/components/ui/input"
 import { Skeleton } from "~/components/ui/skeleton"
 import { DatePicker } from "~/components/calendar"
 import { Icons } from "~/components/icons"
 import { Layout } from "~/components/layouts/layout"
 
-const Map = dynamic(() => import("~/components/models/create-listing-modal/custom-map"), { ssr: false })
+const Map = dynamic(() => import("~/components/modals/create-listing-modal/custom-map"), { ssr: false })
 
 type ServerSideProps = {
   query: {
@@ -29,12 +31,27 @@ export function getServerSideProps({ query }: ServerSideProps) {
   }
 }
 
+type UpdatePayload = {
+  description: string
+  title: string
+}
+
 export default function ListingPage({ query }: ServerSideProps) {
+  const [openUpdateDescription, setOpenUpdateDescription] = useState<boolean>(false)
+  const [openUpdateTitle, setOpenUpdateTitle] = useState<boolean>(false)
   const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false)
   const [galleryModalOpen, setGalleryModalOpen] = useState<boolean>(false)
   const { listing, isLoading } = useListing(query.id)
   const [currentImage, setCurrentImage] = useState<number>(0)
   const { session } = useSession()
+
+  const [descriptionUpdate, setDescriptionUpdate] = useState<string>("")
+  const [titleUpdate, setTitleUpdate] = useState<string>("")
+
+  useEffect(() => {
+    setDescriptionUpdate(listing?.description ?? "")
+    setTitleUpdate(listing?.title ?? "")
+  }, [listing])
 
   function handleImageLeftClick() {
     if (listing?.images) {
@@ -58,6 +75,20 @@ export default function ListingPage({ query }: ServerSideProps) {
 
   function handleDotClick(i: number) {
     setCurrentImage(i)
+  }
+
+  const {} = useMutation({
+    mutationFn: (payload: UpdatePayload) => API.patch(`/listings/${query.id}`, payload),
+  })
+
+  function handleUpdate() {
+    const payload: UpdatePayload = {
+      description: descriptionUpdate,
+      title: titleUpdate,
+    }
+    setOpenUpdateDescription(false)
+    setOpenUpdateTitle(false)
+    console.log(payload)
   }
 
   const CategoryIcon = categories.find((category) => category.label === listing?.category)
@@ -111,15 +142,40 @@ export default function ListingPage({ query }: ServerSideProps) {
             <section className=" text-start">
               <div className="flex w-full items-center justify-between">
                 <article>
-                  <h2 className="text-2xl font-bold">{listing?.title}</h2>
+                  {openUpdateTitle ? (
+                    <Input
+                      className="text-2xl font-bold"
+                      variant="empty"
+                      value={titleUpdate}
+                      onChange={(e) => setTitleUpdate(e.target.value)}
+                    />
+                  ) : (
+                    <h2 className="text-2xl font-bold">{listing?.title}</h2>
+                  )}
                   <p className="text-muted-foreground">
                     {listing?.location.region}, {listing?.location.label}
                   </p>
                 </article>
                 {session?.id === listing?.ownerId && (
-                  <Button variant="destructive" onClick={() => setDeleteModalOpen(true)}>
-                    Delete Property
-                  </Button>
+                  <article className="flex items-center justify-center gap-2">
+                    <Button
+                      onClick={() => setOpenUpdateTitle(!openUpdateTitle)}
+                      variant="ghost"
+                      className="h-7 w-7 p-0"
+                    >
+                      <Icons.Pen className="h-4 w-4" />
+                    </Button>
+
+                    {openUpdateTitle && listing?.title !== titleUpdate && (
+                      <Button onClick={handleUpdate} className="h-7 w-7 p-0">
+                        <Icons.Check className="h-4 w-4" />
+                      </Button>
+                    )}
+
+                    <Button size="sm" variant="destructive" onClick={() => setDeleteModalOpen(true)}>
+                      Delete Property
+                    </Button>
+                  </article>
                 )}
               </div>
 
@@ -207,9 +263,35 @@ export default function ListingPage({ query }: ServerSideProps) {
                     <p className="text-muted-foreground">{CategoryIcon?.description}</p>
                   </div>
                 </article>
-                <article className="flex w-full flex-col items-start justify-start gap-2 border-b border-border py-4">
+                <article className="relative flex w-full flex-col items-start justify-start gap-2 border-b border-border py-4">
                   <h2 className="text-xl font-medium">Description</h2>
-                  <p className="text-muted-foreground">{listing?.description}</p>
+                  {openUpdateDescription ? (
+                    <textarea
+                      onChange={(e) => setDescriptionUpdate(e.target.value)}
+                      className={inputVariants({
+                        variant: "empty",
+                      })}
+                      value={descriptionUpdate}
+                    />
+                  ) : (
+                    <p className="text-muted-foreground">{listing?.description}</p>
+                  )}
+                  {session?.id === listing?.ownerId && (
+                    <>
+                      <Button
+                        onClick={() => setOpenUpdateDescription(!openUpdateDescription)}
+                        className="absolute right-4 top-4 h-7 w-7 p-0"
+                        variant="ghost"
+                      >
+                        <Icons.Pen className="h-4 w-4" />
+                      </Button>
+                      {openUpdateDescription && listing?.description !== descriptionUpdate && (
+                        <Button onClick={handleUpdate} className="absolute right-4 top-12 h-7 w-7 p-0">
+                          <Icons.Check className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </>
+                  )}
                 </article>
 
                 <article className="flex w-full flex-col items-start justify-start gap-2 border-b border-border py-4">
