@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState, type ChangeEvent } from "react"
 import Image from "next/image"
-import { useRouter } from "next/router"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 
@@ -19,7 +18,6 @@ type GalleryModalProps = {
 
 export function GalleryModal({ isOpen, onClose, images, listingId }: GalleryModalProps) {
   const queryClient = useQueryClient()
-  const router = useRouter()
   const inputFileRef = useRef<HTMLInputElement>(null)
   const [imagesArr, setImages] = useState<ListingImage[]>([])
   const [uploadArr, setUploadArr] = useState<string[]>([])
@@ -42,7 +40,7 @@ export function GalleryModal({ isOpen, onClose, images, listingId }: GalleryModa
         const data = res.data as { url: string }
         const imagePayload: ListingImage = {
           url: data.url,
-          listingId: imagesArr[0].listingId,
+          listingId: Number(listingId),
           id: Math.floor(Math.random() * 1000000),
         }
         setImages((prev) => [...prev, imagePayload])
@@ -130,7 +128,7 @@ export function GalleryModal({ isOpen, onClose, images, listingId }: GalleryModa
           </div>
         </section>
         <section className="flex max-w-[40rem] gap-2 overflow-x-scroll p-4">
-          {images
+          {images || imagesArr.length > 0
             ? imagesArr.map((image, i) => (
                 <div key={i} className="relative aspect-square h-24 w-24 rounded-md bg-muted">
                   <Image
