@@ -2,17 +2,39 @@ import { useState } from "react"
 
 import { categories } from "~/config/categories"
 import { cn } from "~/lib/utils"
-import { Button } from "~/components/ui/button"
+import { useListings } from "~/hooks/query/use-listings"
+import { ListingCard } from "~/components/ui/listing-card"
+import { Skeleton } from "~/components/ui/skeleton"
 import { Layout } from "~/components/layouts/layout"
 
-export default function Home() {
+export default function HomePage() {
   const [selectedCategory, setSelectedCategory] = useState<string>("")
+  const { listings, metadata, isLoading } = useListings()
+
   return (
     <>
       <Categories selected={selectedCategory} setSelected={setSelectedCategory} />
       <Layout className="mt-0">
-        <Button>Hello World</Button>
-        <a href={"http://localhost:8080/v1/auth/github/login"}>Login with Github</a>
+        {isLoading ? (
+          <section className="mt-4 grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 ">
+            {Array.from({ length: 15 }).map((_, i) => (
+              <Skeleton key={i} className="aspect-square h-full w-full rounded-md" />
+            ))}
+          </section>
+        ) : (
+          <section className="mt-4 grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 ">
+            {listings?.map((listing) => (
+              <ListingCard
+                key={listing.id}
+                href={`/listings/${listing.id}`}
+                images={listing.images}
+                region={listing.location.region}
+                label={listing.title}
+                price={listing.price}
+              />
+            ))}
+          </section>
+        )}
       </Layout>
     </>
   )
@@ -22,6 +44,7 @@ type CategoriesProps = {
   selected: string
   setSelected: (selected: string) => void
 }
+
 export function Categories({ selected, setSelected }: CategoriesProps) {
   return (
     <div className=" mt-16 flex w-full items-center justify-center py-3 ">

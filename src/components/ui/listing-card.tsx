@@ -43,7 +43,7 @@ export function ListingCard({ href, images, region, label, price, reservation }:
       <div className="relative flex  w-full flex-col gap-2 overflow-hidden rounded-md">
         {images?.length > 1 && (
           <Button
-            className="absolute right-2 top-1/2 z-10 h-6 w-6 -translate-y-1/2 p-0"
+            className="absolute right-2 top-1/2 z-10 h-6 w-6 -translate-y-1/2 rounded-full p-0"
             onClick={handleImageRightClick}
           >
             <Icons.ChevronRight className="h-4 w-4" />
@@ -59,7 +59,10 @@ export function ListingCard({ href, images, region, label, price, reservation }:
           />
         </Link>
         {images?.length > 1 && (
-          <Button className="absolute left-2 top-1/2 z-10 h-6 w-6 -translate-y-1/2 p-0" onClick={handleImageLeftClick}>
+          <Button
+            className="absolute left-2 top-1/2 z-10 h-6 w-6 -translate-y-1/2 rounded-full p-0"
+            onClick={handleImageLeftClick}
+          >
             <Icons.ChevronLeft className="h-4 w-4" />
           </Button>
         )}
