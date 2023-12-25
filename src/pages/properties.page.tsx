@@ -5,11 +5,6 @@ import { Layout } from "~/components/layouts/layout"
 
 export default function PropertiesPage() {
   const { listings, isLoading } = useUserListings()
-  if (listings) {
-    console.log(listings)
-  }
-
-  console.log(listings?.length)
   return (
     <Layout title="Properties">
       <section className="flex flex-1 flex-col items-center justify-center">
