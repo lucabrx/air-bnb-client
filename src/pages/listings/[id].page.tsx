@@ -145,7 +145,7 @@ export default function ListingPage({ query }: ServerSideProps) {
 
                 <div className="absolute inset-x-0 bottom-3 flex h-fit w-full items-center justify-center gap-1.5 ">
                   {listing &&
-                    listing?.images.length > 1 &&
+                    listing?.images?.length > 1 &&
                     listing?.images.map((_, i) => (
                       <span
                         key={i}
@@ -158,7 +158,7 @@ export default function ListingPage({ query }: ServerSideProps) {
                     ))}
                 </div>
 
-                {listing && listing?.images.length > 1 && (
+                {listing && listing?.images?.length > 1 && (
                   <>
                     <Button
                       size="icon"

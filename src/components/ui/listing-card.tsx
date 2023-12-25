@@ -41,21 +41,28 @@ export function ListingCard({ href, images, region, label, price, reservation }:
   return (
     <article className="col-span-1 ">
       <div className="relative flex  w-full flex-col gap-2 overflow-hidden rounded-md">
-        <Button className="absolute right-2 top-1/2 z-10 h-6 w-6 -translate-y-1/2 p-0" onClick={handleImageRightClick}>
-          <Icons.ChevronRight className="h-4 w-4" />
-        </Button>
+        {images?.length > 1 && (
+          <Button
+            className="absolute right-2 top-1/2 z-10 h-6 w-6 -translate-y-1/2 p-0"
+            onClick={handleImageRightClick}
+          >
+            <Icons.ChevronRight className="h-4 w-4" />
+          </Button>
+        )}
         <Link href={href} className="group  cursor-pointer">
           <Image
-            src={images[currentImage].url}
+            src={images ? images[currentImage].url : "/default-placeholder.png"}
             alt="property image"
             width={1000}
             height={1000}
             className="aspect-square rounded-md object-cover transition-all duration-300 ease-in-out hover:opacity-80 group-hover:scale-110"
           />
         </Link>
-        <Button className="absolute left-2 top-1/2 z-10 h-6 w-6 -translate-y-1/2 p-0" onClick={handleImageLeftClick}>
-          <Icons.ChevronLeft className="h-4 w-4" />
-        </Button>
+        {images?.length > 1 && (
+          <Button className="absolute left-2 top-1/2 z-10 h-6 w-6 -translate-y-1/2 p-0" onClick={handleImageLeftClick}>
+            <Icons.ChevronLeft className="h-4 w-4" />
+          </Button>
+        )}
       </div>
       <h2 className="text-lg font-semibold">
         {region}, {label}
