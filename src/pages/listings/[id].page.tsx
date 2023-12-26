@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import dynamic from "next/dynamic"
 import Image from "next/image"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { toast } from "sonner"
 
 import { DeleteListingModal } from "~/pages/listings/delete-listing-modal"
 import { GalleryModal } from "~/pages/listings/gallery-modal"
@@ -34,11 +35,15 @@ export function getServerSideProps({ query }: ServerSideProps) {
 type UpdatePayload = {
   description: string
   title: string
+  price: number
 }
 
 export default function ListingPage({ query }: ServerSideProps) {
+  const queryClient = useQueryClient()
   const [openUpdateDescription, setOpenUpdateDescription] = useState<boolean>(false)
   const [openUpdateTitle, setOpenUpdateTitle] = useState<boolean>(false)
+  const [openUpdatePrice, setOpenUpdatePrice] = useState<boolean>(false)
+
   const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false)
   const [galleryModalOpen, setGalleryModalOpen] = useState<boolean>(false)
   const { listing, isLoading } = useListing(query.id)
@@ -47,10 +52,12 @@ export default function ListingPage({ query }: ServerSideProps) {
 
   const [descriptionUpdate, setDescriptionUpdate] = useState<string>("")
   const [titleUpdate, setTitleUpdate] = useState<string>("")
+  const [priceUpdate, setPriceUpdate] = useState<number>(0)
 
   useEffect(() => {
     setDescriptionUpdate(listing?.description ?? "")
     setTitleUpdate(listing?.title ?? "")
+    setPriceUpdate(listing?.price ?? 0)
   }, [listing])
 
   function handleImageLeftClick() {
@@ -77,18 +84,40 @@ export default function ListingPage({ query }: ServerSideProps) {
     setCurrentImage(i)
   }
 
-  const {} = useMutation({
-    mutationFn: (payload: UpdatePayload) => API.patch(`/listings/${query.id}`, payload),
+  const { mutate } = useMutation({
+    mutationFn: (payload: UpdatePayload) => API.patch(`/v1/listings/${query.id}`, payload),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["listing", query.id] })
+      toast.success("Listing updated successfully")
+      setOpenUpdateDescription(false)
+      setOpenUpdateTitle(false)
+      setOpenUpdatePrice(false)
+    },
+    onError: () => {
+      toast.error("Something went wrong, please try again later")
+    },
   })
 
   function handleUpdate() {
+    if (descriptionUpdate.length < 10) {
+      toast.error("Description must be at least 10 characters long")
+      return
+    }
+    if (titleUpdate.length < 5) {
+      toast.error("Title must be at least 5 characters long")
+      return
+    }
+    if (priceUpdate < 1) {
+      toast.error("Price must be greater than 1 dollar")
+      return
+    }
     const payload: UpdatePayload = {
       description: descriptionUpdate,
       title: titleUpdate,
+      price: priceUpdate,
     }
-    setOpenUpdateDescription(false)
-    setOpenUpdateTitle(false)
-    console.log(payload)
+
+    mutate(payload)
   }
 
   const CategoryIcon = categories.find((category) => category.label === listing?.category)
@@ -237,7 +266,14 @@ export default function ListingPage({ query }: ServerSideProps) {
             </section>
 
             <section className="mt-4 grid flex-col md:grid-cols-2 md:gap-8 lg:grid-cols-[60%,1fr]">
-              <Calendar />
+              <Calendar
+                handleUpdate={handleUpdate}
+                price={priceUpdate}
+                setUpdatePrice={setPriceUpdate}
+                openUpdatePrice={openUpdatePrice}
+                setOpenUpdatePrice={setOpenUpdatePrice}
+                ownerId={listing?.ownerId}
+              />
               <div className="flex w-full flex-col justify-start">
                 <article className="flex w-full flex-col items-start justify-start gap-2 border-b border-border pb-4">
                   <div className="flex w-full items-center justify-start gap-4">
@@ -317,12 +353,51 @@ export default function ListingPage({ query }: ServerSideProps) {
   )
 }
 
-function Calendar() {
+type CalendarProps = {
+  price: number
+  setUpdatePrice: (price: number) => void
+  ownerId?: number
+  openUpdatePrice: boolean
+  setOpenUpdatePrice: (open: boolean) => void
+  handleUpdate: () => void
+}
+function Calendar({
+  price,
+  setOpenUpdatePrice,
+  ownerId,
+  openUpdatePrice,
+  setUpdatePrice,
+  handleUpdate,
+}: CalendarProps) {
+  const { session } = useSession()
   return (
     <article className="h-fit w-full overflow-hidden rounded-xl border border-border bg-card md:order-2">
-      <div className="flex flex-row items-center gap-1 p-4">
-        <div className="text-2xl font-semibold">$ 100</div>
-        <div className="font-light text-neutral-600">night</div>
+      <div className="relative flex flex-row items-center gap-1 p-4">
+        {ownerId === session?.id && (
+          <div className="absolute right-3 top-3 flex items-center justify-center gap-2">
+            <Button onClick={() => setOpenUpdatePrice(!openUpdatePrice)} variant="ghost" className="h-7 w-7 p-0">
+              <Icons.Pen className="h-4 w-4" />
+            </Button>
+            {openUpdatePrice && (
+              <Button onClick={handleUpdate} className="h-7 w-7 p-0">
+                <Icons.Check className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
+        )}
+        {openUpdatePrice ? (
+          <Input
+            className="w-5/6 text-2xl font-bold"
+            variant="empty"
+            type="number"
+            value={price}
+            onChange={(e) => setUpdatePrice(Number(e.target.value))}
+          />
+        ) : (
+          <h2 className="text-2xl font-bold">
+            $ {price} <span className="text-sm font-normal">night</span>
+          </h2>
+        )}
       </div>
       <hr />
       <DatePicker value={{ startDate: new Date(), endDate: new Date() }} onChange={() => {}} disabledDates={[]} />
@@ -335,7 +410,7 @@ function Calendar() {
       <hr />
       <div className="flex flex-row items-center justify-between p-4 text-lg font-semibold">
         <h2>Total</h2>
-        <h2>$ 200</h2>
+        <h2>$ 100</h2>
       </div>
     </article>
   )
