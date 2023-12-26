@@ -6,7 +6,7 @@ import { toast } from "sonner"
 import { API } from "~/lib/utils"
 import { type ListingImage } from "~/hooks/query/use-listing"
 import { Button } from "~/components/ui/button"
-import { Modal } from "~/components/ui/model"
+import { Modal } from "~/components/ui/modal"
 import { Icons } from "~/components/icons"
 
 type GalleryModalProps = {

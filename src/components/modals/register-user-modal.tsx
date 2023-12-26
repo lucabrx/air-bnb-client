@@ -11,7 +11,7 @@ import { useLoginUserModalContext } from "~/hooks/context/login-user-modal-conte
 import { useRegisterUserModalContext } from "~/hooks/context/register-user-modal-context"
 import { Button, buttonVariants } from "~/components/ui/button"
 import { Input } from "~/components/ui/input"
-import { Modal } from "~/components/ui/model"
+import { Modal } from "~/components/ui/modal"
 import { Icons } from "~/components/icons"
 
 const registerUserValidator = z

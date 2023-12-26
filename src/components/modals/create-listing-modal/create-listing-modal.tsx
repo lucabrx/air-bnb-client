@@ -14,7 +14,7 @@ import { useCreateListingModalContext } from "~/hooks/context/create-listing-mod
 import useCountries from "~/hooks/use-countries"
 import { Button } from "~/components/ui/button"
 import { Input, inputVariants } from "~/components/ui/input"
-import { Modal } from "~/components/ui/model"
+import { Modal } from "~/components/ui/modal"
 import { Icons } from "~/components/icons"
 import { Counter } from "~/components/modals/create-listing-modal/counter"
 import CountrySelect, { type CountrySelectValue } from "~/components/modals/create-listing-modal/country-select"

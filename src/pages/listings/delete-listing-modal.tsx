@@ -4,7 +4,7 @@ import { toast } from "sonner"
 
 import { API } from "~/lib/utils"
 import { Button } from "~/components/ui/button"
-import { Modal } from "~/components/ui/model"
+import { Modal } from "~/components/ui/modal"
 
 type DeleteListingModalProps = {
   isOpen: boolean
