@@ -46,12 +46,12 @@ export function PasswordSettings() {
         <div className="grid gap-1.5">
           <label htmlFor="oldPassword">Old Password</label>
           <Input placeholder="************" type="password" id="oldPassword" {...register("oldPassword")} />
-          {errors.oldPassword && <p className="text-error">{errors.oldPassword.message}</p>}
+          {errors.oldPassword && <p className="text-destructive">{errors.oldPassword.message}</p>}
         </div>
         <div className="grid gap-1.5">
           <label htmlFor="newPassword">New Password</label>
           <Input placeholder="************" type="password" id="newPassword" {...register("newPassword")} />
-          {errors.newPassword && <p className="text-error">{errors.newPassword.message}</p>}
+          {errors.newPassword && <p className="text-destructive">{errors.newPassword.message}</p>}
         </div>
         <div className="flex justify-end pt-3">
           <Button size="sm" disabled={isPending} isLoading={isPending} type="submit">

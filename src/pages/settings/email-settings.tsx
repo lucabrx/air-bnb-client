@@ -96,7 +96,7 @@ export function EmailSettings() {
           <div className="grid gap-1.5">
             <label htmlFor="code">Code</label>
             <Input id="code" type="text" placeholder="das-xcc" {...registerChangeEmail("verifyCode")} />
-            {errorsChangeEmail.verifyCode && <p className="text-error">{errorsChangeEmail.verifyCode.message}</p>}
+            {errorsChangeEmail.verifyCode && <p className="text-destructive">{errorsChangeEmail.verifyCode.message}</p>}
           </div>
           <div className="flex justify-end pt-3">
             <Button size="sm" disabled={isPendingChangeEmail} isLoading={isPendingChangeEmail} type="submit">

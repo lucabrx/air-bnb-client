@@ -55,11 +55,11 @@ export function Modal({ children, onClose, disabled, isOpen, styles, title }: Mo
         <div
           ref={modalRef}
           className={cn(
-            "relative h-fit w-full flex-col items-end rounded-t-3xl border border-border bg-card shadow-lg md:h-auto md:rounded-md md:rounded-xl  lg:h-auto lg:w-auto",
+            "relative h-fit w-full flex-col items-end rounded-t-3xl border border-border bg-card shadow-lg md:h-auto  md:rounded-xl  lg:h-auto lg:w-auto",
             styles
           )}
         >
-          <div className="relative flex w-full items-center justify-center border-b border-border px-4 py-4">
+          <div className="relative flex w-full items-center justify-center border-b border-border p-4">
             <Button
               size="icon"
               variant="ghost"

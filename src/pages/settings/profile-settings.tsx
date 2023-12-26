@@ -95,7 +95,7 @@ export function ProfileSettings() {
           className="mt-2 aspect-square rounded-md"
         />
         {hover && (
-          <Icons.Plus className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform cursor-pointer rounded-full bg-white p-1" />
+          <Icons.Plus className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer rounded-full bg-white p-1 transition-transform" />
         )}{" "}
         <input
           ref={inputFileRef}
