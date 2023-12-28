@@ -3,7 +3,7 @@ import { type AxiosError } from "axios"
 
 import { API } from "~/lib/utils"
 
-type User = {
+export type User = {
   id: number
   createdAt: string
   name: string
