@@ -10,10 +10,12 @@ import { HeroImages } from "~/pages/listings/hero-images"
 import { LeftSideInfo } from "~/pages/listings/left-side-info"
 import { PageLoadingSkeleton } from "~/pages/listings/page-loading-skeleton"
 import { PriceSection } from "~/pages/listings/price-section"
+import { PropertyBookingsModal } from "~/pages/listings/property-bookings-modal"
 
 import { categories } from "~/config/categories"
 import { API } from "~/lib/utils"
 import { useListing } from "~/hooks/query/use-listing"
+import { usePropertyBookings } from "~/hooks/query/use-property-bookings"
 import { useSession } from "~/hooks/query/use-session"
 import { Button } from "~/components/ui/button"
 import { Input, inputVariants } from "~/components/ui/input"
@@ -51,7 +53,6 @@ export default function ListingPage({ query }: ServerSideProps) {
 
   const from = addDays(new Date(), -1)
   const firstDayInHistory = new Date(1970, 1, 1)
-  const disabledDays = [{ from: firstDayInHistory, to: from }]
 
   const queryClient = useQueryClient()
   const [openUpdateDescription, setOpenUpdateDescription] = useState<boolean>(false)
@@ -60,6 +61,7 @@ export default function ListingPage({ query }: ServerSideProps) {
 
   const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false)
   const [galleryModalOpen, setGalleryModalOpen] = useState<boolean>(false)
+  const [propertyBookingsModalOpen, setPropertyBookingsModalOpen] = useState<boolean>(false)
   const { listing, isLoading } = useListing(query.id)
   const { session } = useSession()
 
@@ -131,6 +133,13 @@ export default function ListingPage({ query }: ServerSideProps) {
     mutateBooking(payload)
   }
 
+  const { bookings } = usePropertyBookings(query.id)
+  const disabledDays = [{ from: firstDayInHistory, to: from }]
+  bookings?.forEach((booking) => {
+    disabledDays.push({ from: new Date(booking.checkIn), to: new Date(booking.checkOut) })
+  })
+
+  console.log("disabledDays", disabledDays)
   const CategoryIcon = categories.find((category) => category.label === listing?.category)
   return (
     <>
@@ -171,6 +180,10 @@ export default function ListingPage({ query }: ServerSideProps) {
                         <Icons.Check className="h-4 w-4" />
                       </Button>
                     )}
+
+                    <Button onClick={() => setPropertyBookingsModalOpen(true)} size="sm">
+                      <Icons.ChevronLeft className="h-4 w-4" /> See Bookings
+                    </Button>
 
                     <Button size="sm" variant="destructive" onClick={() => setDeleteModalOpen(true)}>
                       Delete Property
@@ -241,9 +254,9 @@ export default function ListingPage({ query }: ServerSideProps) {
                 </div>
 
                 <Button
-                  disabled={session?.id === listing?.ownerId}
+                  disabled={session?.id === listing?.ownerId || !startDate || !endDate}
                   onClick={handleBooking}
-                  className="w-full disabled:cursor-not-allowed"
+                  className="mt-2 w-full disabled:cursor-not-allowed"
                 >
                   Book
                 </Button>
@@ -259,6 +272,11 @@ export default function ListingPage({ query }: ServerSideProps) {
         isOpen={galleryModalOpen}
         onClose={() => setGalleryModalOpen(false)}
         images={listing?.images}
+        listingId={query.id}
+      />
+      <PropertyBookingsModal
+        isOpen={propertyBookingsModalOpen}
+        onClose={() => setPropertyBookingsModalOpen(false)}
         listingId={query.id}
       />
     </>
