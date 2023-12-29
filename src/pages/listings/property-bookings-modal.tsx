@@ -1,6 +1,4 @@
-import type { ListingImage } from "~/hooks/query/use-listing"
 import { usePropertyBookings } from "~/hooks/query/use-property-bookings"
-import { Button } from "~/components/ui/button"
 import { ListingCard } from "~/components/ui/listing-card"
 import { Modal } from "~/components/ui/modal"
 
