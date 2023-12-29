@@ -24,6 +24,10 @@ const menuItems = [
     name: "My Properties",
     href: "/properties",
   },
+  {
+    name: "My Bookings",
+    href: "/bookings",
+  },
 ]
 
 export function Header() {

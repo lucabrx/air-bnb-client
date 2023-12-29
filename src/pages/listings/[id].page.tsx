@@ -240,7 +240,11 @@ export default function ListingPage({ query }: ServerSideProps) {
                   />
                 </div>
 
-                <Button onClick={handleBooking} className="w-full">
+                <Button
+                  disabled={session?.id === listing?.ownerId}
+                  onClick={handleBooking}
+                  className="w-full disabled:cursor-not-allowed"
+                >
                   Book
                 </Button>
               </div>
