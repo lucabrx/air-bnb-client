@@ -9,9 +9,9 @@ import { Icons } from "~/components/icons"
 type ListingCardProps = {
   href: string
   images: ListingImage[]
-  region: string
-  label: string
-  price: number
+  region?: string
+  label?: string
+  price?: number
   reservation?: boolean
 }
 
@@ -67,13 +67,17 @@ export function ListingCard({ href, images, region, label, price, reservation }:
           </Button>
         )}
       </div>
-      <h2 className="text-lg font-semibold">
-        {region}, {label}
-      </h2>
-      <div className="flex flex-row items-center gap-1">
-        <span className="font-semibold">${price}</span>
-        {!reservation && <span className="font-light">night</span>}
-      </div>
+      {region && label && (
+        <h2 className="text-lg font-semibold">
+          {region}, {label}
+        </h2>
+      )}
+      {price && (
+        <div className="flex flex-row items-center gap-1">
+          <span className="font-semibold">${price}</span>
+          {!reservation && <span className="font-light">night</span>}
+        </div>
+      )}
     </article>
   )
 }
