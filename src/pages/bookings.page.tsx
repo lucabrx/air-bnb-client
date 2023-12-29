@@ -9,7 +9,7 @@ import { ListingCard } from "~/components/ui/listing-card"
 import { Skeleton } from "~/components/ui/skeleton"
 import { Layout } from "~/components/layouts/layout"
 
-export default function PropertiesPage() {
+export default function UserBookingPage() {
   const router = useRouter()
   const { bookings, isLoading } = useUserBookings()
 
