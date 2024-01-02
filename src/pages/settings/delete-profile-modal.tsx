@@ -35,7 +35,7 @@ export function DeleteProfileModal() {
         </div>
       </section>
 
-      <Modal onClose={() => setIsOpen(false)} isOpen={isOpen} title="Delete Account">
+      <Modal onClose={() => setIsOpen(false)} isOpen={isOpen} title="Delete Account" styles="lg:max-w-[36rem]">
         <div className="p-4">
           <h2 className="text-xl font-semibold">Are you sure?</h2>
           <p className="mt-2 text-muted-foreground">
@@ -46,7 +46,7 @@ export function DeleteProfileModal() {
             <Button onClick={() => setIsOpen(false)} size="sm" variant="outline">
               Cancel
             </Button>
-            <Button onClick={() => mutate()} size="sm" variant="destructive" isLoading={isPending}>
+            <Button className="mt-2" onClick={() => mutate()} size="sm" variant="destructive" isLoading={isPending}>
               Delete Account
             </Button>
           </div>

@@ -152,9 +152,21 @@ export function RegisterUserModal() {
           </div>
 
           <section className="grid gap-2 p-4">
-            <Button disabled={isPendingRegister} variant="outline" className="w-full">
+            <a
+              onClick={() => {
+                toast.info("Welcome user!")
+                closeModal()
+              }}
+              href={`${BASE_URL}/v1/auth/google/login`}
+              className={cn(
+                buttonVariants({
+                  variant: "outline",
+                }),
+                "w-full"
+              )}
+            >
               <Icons.Google className="mr-2 h-5 w-5" /> Sign in with Google
-            </Button>
+            </a>
             <a
               onClick={() => {
                 toast.info("Welcome user!")
