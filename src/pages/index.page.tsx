@@ -33,7 +33,7 @@ export default function HomePage() {
               <Skeleton key={i} className="aspect-square h-full w-full rounded-md" />
             ))}
           </section>
-        ) : listings.length > 1 ? (
+        ) : listings.length > 0 ? (
           <section className="mt-4 grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 ">
             {listings?.map((listing) => (
               <ListingCard
