@@ -290,7 +290,7 @@ export function CreateListingModal() {
         )}
       </form>
       <div className="flex items-center justify-center gap-4 p-4">
-        <Button isLoading={isPending} className="w-full" size="sm" variant="outline" onClick={onBack}>
+        <Button disabled={isPending} className="w-full" size="sm" variant="outline" onClick={onBack}>
           {step === Steps.Description ? "Cancel" : "Back"}
         </Button>
         <Button
