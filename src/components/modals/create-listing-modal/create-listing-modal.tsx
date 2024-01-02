@@ -89,6 +89,13 @@ export function CreateListingModal() {
     onSuccess: ({ data }: { data: { id: number } }) => {
       void router.push(`/listings/${data.id}`)
       reset()
+      setSelectedCategory("Beachfront")
+      setSelectedLocation(getAll()[0])
+      setGuestCount(1)
+      setBedroomCount(1)
+      setBathroomCount(1)
+      setImages([])
+      setStep(Steps.Description)
       toast.success("Listing created successfully.")
       closeListingModal()
     },
