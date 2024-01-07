@@ -123,6 +123,11 @@ export default function ListingPage({ query }: ServerSideProps) {
   })
 
   function handleBooking() {
+    if (!session) {
+      toast.error("Please sign in before booking this place")
+      return
+    }
+
     const payload: BookingPayload = {
       listingId: Number(query.id),
       startDate: startDate ?? new Date(),
