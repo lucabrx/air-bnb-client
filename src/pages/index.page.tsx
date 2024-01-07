@@ -35,16 +35,27 @@ export default function HomePage() {
           </section>
         ) : Array.isArray(listings) && listings.length > 0 ? (
           <section className="mt-4 grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 ">
-            {listings?.map((listing) => (
-              <ListingCard
-                key={listing.id}
-                href={`/listings/${listing.id}`}
-                images={listing.images}
-                region={listing.location.region}
-                label={listing.title}
-                price={listing.price}
-              />
-            ))}
+            {listings?.map((listing, i) =>
+              listing?.id ? (
+                <ListingCard
+                  key={listing?.id}
+                  href={`/listings/${listing?.id}`}
+                  images={listing?.images}
+                  region={listing?.location.region}
+                  label={listing?.title}
+                  price={listing?.price}
+                />
+              ) : (
+                <div key={i} className="mt-4 flex w-full items-center justify-center py-3 ">
+                  <div className=" flex w-full flex-col items-center justify-center gap-3">
+                    <h1 className="text-2xl font-bold">No listings found</h1>
+                    <Button onClick={() => void router.push("/")} variant="outline" size="sm">
+                      Reset Search
+                    </Button>
+                  </div>
+                </div>
+              )
+            )}
           </section>
         ) : (
           <div className="mt-4 flex w-full items-center justify-center py-3 ">
